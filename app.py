@@ -141,7 +141,6 @@ def build_interface() -> gr.Blocks:
             translate_pdf_file,
             inputs=[file_input, gdrive_url, service, lang_in, lang_out, threads],
             outputs=[output_file, output_status],
-            progress=gr.Progress()
         )
 
     return demo
