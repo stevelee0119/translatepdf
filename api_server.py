@@ -11,14 +11,18 @@ import uuid
 from pathlib import Path
 from typing import Optional, Tuple
 
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import requests
 from pdf2zh.doclayout import OnnxModel
 from pdf2zh.high_level import translate
 
 
-app = Flask(__name__)
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent.absolute()
+STATIC_DIR = SCRIPT_DIR / "docs"
+
+app = Flask(__name__, static_folder=str(STATIC_DIR), static_url_path="")
 CORS(app)  # Enable CORS for GitHub Pages
 
 # Configuration
@@ -68,6 +72,22 @@ def download_google_drive(url: str) -> Path:
                 fd.write(chunk)
 
     return target_path
+
+
+@app.route("/")
+def index():
+    """Serve index.html"""
+    return send_from_directory(STATIC_DIR, "index.html")
+
+
+@app.route("/<path:path>")
+def serve_static(path):
+    """Serve static files"""
+    file_path = STATIC_DIR / path
+    if file_path.exists() and file_path.is_file():
+        return send_from_directory(STATIC_DIR, path)
+    # For SPA routing, serve index.html for unknown routes
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 @app.route("/health", methods=["GET"])
