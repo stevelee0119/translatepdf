@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF 한영 번역기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        select,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .range-value {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .status-box h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .status-text {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .download-link:hover {
+            background: #218838;
+        }
+
+        .divider {
+            text-align: center;
+            color: #999;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 PDF 한영 번역기</h1>
+            <p>영어 논문 PDF를 한국어 PDF로 빠르고 깔끔하게 변환합니다</p>
+        </div>
+
+        <div class="content">
+            <div id="alert-container"></div>
+
+            <div class="row">
+                <div>
+                    <div class="form-group">
+                        <label for="file-input">📁 디바이스에서 PDF 선택</label>
+                        <input type="file" id="file-input" accept=".pdf" />
+                    </div>
+
+                    <div class="divider"><span>또는</span></div>
+
+                    <div class="form-group">
+                        <label for="gdrive-url">🔗 Google Drive PDF 링크</label>
+                        <input type="text" id="gdrive-url" placeholder="https://drive.google.com/file/d/FILE_ID/view?usp=sharing" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="service">🔄 번역 서비스</label>
+                        <select id="service">
+                            <option value="google">Google 번역</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lang-in">📝 원본 언어 코드</label>
+                        <input type="text" id="lang-in" value="en" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lang-out">🎯 목표 언어 코드</label>
+                        <input type="text" id="lang-out" value="ko" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="threads">⚡ 번역 스레드</label>
+                        <div class="slider-group">
+                            <input type="range" id="threads" min="1" max="8" value="4" />
+                            <span class="range-value" id="threads-value">4</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="translate-btn">🚀 번역 시작</button>
+                </div>
+
+                <div>
+                    <div class="status-box">
+                        <h3>📊 상태 정보</h3>
+                        <div class="status-text" id="status-text">
+                            준비 완료되었습니다.<br>
+                            PDF 파일을 업로드하거나 Google Drive 링크를 입력하세요.
+                        </div>
+                        <div class="progress-bar" id="progress-bar" style="display: none;">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div id="download-container" style="display: none; margin-top: 15px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info" style="margin-top: 30px;">
+                <strong>ℹ️ 사용 안내:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>대용량 PDF 파일은 처리 시간이 오래 걸릴 수 있습니다.</li>
+                    <li>Google Drive 링크는 '공개' 또는 '링크 있는 사용자'로 공유된 파일만 지원합니다.</li>
+                    <li>번역 완료 후 다운로드 버튼으로 변환된 PDF를 받을 수 있습니다.</li>
+                    <li>브라우저 백그라운드에서 탭을 닫지 마세요. 번역이 중단될 수 있습니다.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin.includes('github.io') 
+            ? 'https://translatepdf-api.herokuapp.com' // 프로덕션 API
+            : 'http://localhost:7860'; // 로컬 개발
+
+        const fileInput = document.getElementById('file-input');
+        const gdriveUrl = document.getElementById('gdrive-url');
+        const service = document.getElementById('service');
+        const langIn = document.getElementById('lang-in');
+        const langOut = document.getElementById('lang-out');
+        const threads = document.getElementById('threads');
+        const threadsValue = document.getElementById('threads-value');
+        const translateBtn = document.getElementById('translate-btn');
+        const statusText = document.getElementById('status-text');
+        const progressBar = document.getElementById('progress-bar');
+        const progressFill = document.getElementById('progress-fill');
+        const downloadContainer = document.getElementById('download-container');
+        const alertContainer = document.getElementById('alert-container');
+
+        // 스레드 슬라이더 값 업데이트
+        threads.addEventListener('input', (e) => {
+            threadsValue.textContent = e.target.value;
+        });
+
+        // 알림 표시
+        function showAlert(message, type = 'danger') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+
+            if (type !== 'danger') {
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+        }
+
+        // 번역 시작
+        translateBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            const gdrive = gdriveUrl.value.trim();
+
+            if (!file && !gdrive) {
+                showAlert('파일을 업로드하거나 Google Drive 링크를 입력하세요.');
+                return;
+            }
+
+            translateBtn.disabled = true;
+            progressBar.style.display = 'block';
+            downloadContainer.style.display = 'none';
+            statusText.innerHTML = '⏳ 번역을 준비하고 있습니다...';
+
+            try {
+                const formData = new FormData();
+                if (file) {
+                    formData.append('file', file);
+                } else {
+                    formData.append('gdrive_url', gdrive);
+                }
+                formData.append('service', service.value);
+                formData.append('lang_in', langIn.value);
+                formData.append('lang_out', langOut.value);
+                formData.append('threads', threads.value);
+
+                // 진행률을 주기적으로 확인하기 위한 작업 ID 가져오기
+                const response = await fetch(`${API_BASE}/api/translate`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '번역 중 오류가 발생했습니다.');
+                }
+
+                const result = await response.json();
+
+                // 성공
+                statusText.innerHTML = `✅ 번역 완료되었습니다!`;
+                downloadContainer.style.display = 'block';
+                downloadContainer.innerHTML = `
+                    <a href="${API_BASE}/download/${result.task_id}" class="download-link" download>
+                        📥 PDF 다운로드
+                    </a>
+                `;
+                showAlert('번역이 완료되었습니다!', 'success');
+
+                // 폼 초기화
+                fileInput.value = '';
+                gdriveUrl.value = '';
+            } catch (error) {
+                statusText.innerHTML = '❌ 번역 중 오류가 발생했습니다.';
+                showAlert(error.message || '번역 중 오류가 발생했습니다.');
+                console.error('Error:', error);
+            } finally {
+                translateBtn.disabled = false;
+                progressBar.style.display = 'none';
+                progressFill.style.width = '0%';
+            }
+        });
+
+        // 페이지 로드 시 API 연결 확인
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_BASE}/health`, {
+                    method: 'GET',
+                });
+                if (response.ok) {
+                    showAlert('✅ 서버에 연결되었습니다.', 'success');
+                } else {
+                    showAlert('⚠️ 서버 연결 상태를 확인할 수 없습니다.', 'info');
+                }
+            } catch (error) {
+                showAlert('⚠️ API 서버에 연결할 수 없습니다. 로컬에서 실행 중이면 app.py를 실행해주세요.', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

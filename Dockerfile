@@ -12,4 +12,6 @@ RUN python -m pip install --no-cache-dir -r requirements.txt
 COPY . ./
 EXPOSE 7860
 
-CMD ["python", "app.py"]
+# Run Flask API server (for production deployment)
+# For GitHub Pages, frontend is served from docs/ folder
+CMD ["python", "api_server.py"]
