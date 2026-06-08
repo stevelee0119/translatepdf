@@ -34,6 +34,20 @@ python translate_pdf.py paper_en.pdf translated
 결과 파일:
 - `translated/paper_en-mono.pdf`
 
+## 웹 인터페이스 실행
+
+로컬 웹 브라우저에서 사용할 수 있는 간단한 프론트엔드를 제공합니다.
+
+```bash
+python app.py
+```
+
+브라우저에서 열리는 페이지에서:
+- 디바이스에서 PDF 파일 업로드
+- Google Drive 공유 링크 입력
+- 변환 진행 상황을 확인
+- 변환 완료된 PDF를 다운로드
+
 ## 옵션
 
 - `--service`: 번역 서비스 지정 (기본값: `google`)
