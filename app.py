@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 import re
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
+
+# Gradio 5.x requires files to be served from allowed_paths.
+# Use a fixed output directory inside the project folder.
+OUTPUT_DIR = Path(__file__).parent / "outputs"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 import gradio as gr
 import requests
@@ -73,8 +79,9 @@ def translate_pdf_file(
     progress=gr.Progress(),
 ):
     input_pdf = resolve_input_file(file_input, gdrive_url)
-    output_dir = Path(tempfile.gettempdir()) / "translatepdf_output"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Use a temp dir for intermediate translation output
+    temp_output_dir = Path(tempfile.gettempdir()) / "translatepdf_output"
+    temp_output_dir.mkdir(parents=True, exist_ok=True)
 
     progress(0.0, desc="모델 로딩 중...")
     model = OnnxModel.load_onnx()
@@ -91,7 +98,7 @@ def translate_pdf_file(
 
     result_files = translate(
         [str(input_pdf)],
-        output=str(output_dir),
+        output=str(temp_output_dir),
         lang_in=lang_in,
         lang_out=lang_out,
         service=service,
@@ -101,8 +108,14 @@ def translate_pdf_file(
     )
 
     translated_pdf = Path(result_files[0][0])
-    output_text = f"번역 완료: {translated_pdf.name}"
-    return str(translated_pdf), output_text
+
+    # Copy the translated file to OUTPUT_DIR (served by Gradio via allowed_paths)
+    # This preserves the original filename (e.g. paper-mono.pdf) for download.
+    dest_path = OUTPUT_DIR / translated_pdf.name
+    shutil.copy2(str(translated_pdf), str(dest_path))
+
+    output_text = f"번역 완료: {dest_path.name}"
+    return str(dest_path), output_text
 
 
 def build_interface() -> gr.Blocks:
@@ -148,4 +161,13 @@ def build_interface() -> gr.Blocks:
 
 if __name__ == "__main__":
     demo = build_interface()
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
+    # allowed_paths: OUTPUT_DIR for translated file downloads,
+    # and Gradio's own temp dir so pdf2zh can read uploaded files.
+    gradio_temp = Path(tempfile.gettempdir()) / "gradio"
+    gradio_temp.mkdir(parents=True, exist_ok=True)
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        allowed_paths=[str(OUTPUT_DIR), str(gradio_temp)],
+    )

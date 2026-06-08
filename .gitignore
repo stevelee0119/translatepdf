@@ -8,3 +8,5 @@ __pycache__/
 # Generated sample and output files
 sample_en.pdf
 translated_out/
+
+outputs/
