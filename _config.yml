@@ -1,0 +1,11 @@
+# GitHub Pages configuration
+# Build settings
+theme: null
+plugins: []
+
+# Disable Jekyll processing
+exclude:
+  - .git
+  - .gitignore
+  - node_modules
+  - docs/.nojekyll
