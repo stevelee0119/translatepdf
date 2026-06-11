@@ -2,8 +2,8 @@ name: Legal Calendar Sync
 
 on:
   schedule:
-    # 매주 월요일 오전 8시 (KST = UTC+9) → UTC 일요일 23:00
-    - cron: "0 23 * * 0"
+    # 매주 일요일 오후 4시 (KST = UTC+9) → UTC 일요일 07:00
+    - cron: "0 7 * * 0"
   workflow_dispatch:  # 수동 실행 지원
 
 jobs:
