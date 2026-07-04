@@ -82,11 +82,11 @@ def index():
 
 @app.route("/<path:path>")
 def serve_static(path):
-    """Serve static files"""
+    if path.startswith("api/") or path in ("health", "download"):
+        return jsonify({"error": "엔드포인트를 찾을 수 없습니다."}), 404
     file_path = STATIC_DIR / path
     if file_path.exists() and file_path.is_file():
         return send_from_directory(STATIC_DIR, path)
-    # For SPA routing, serve index.html for unknown routes
     return send_from_directory(STATIC_DIR, "index.html")
 
 

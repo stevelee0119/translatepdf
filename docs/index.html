@@ -417,11 +417,19 @@
                 });
 
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || '번역 중 오류가 발생했습니다.');
+                    let msg = '번역 중 오류가 발생했습니다.';
+                    try {
+                        const error = await response.json();
+                        msg = error.error || msg;
+                    } catch (_) {}
+                    throw new Error(msg);
                 }
 
-                const result = await response.json();
+                const text = await response.text();
+                if (!text) {
+                    throw new Error('서버로부터 빈 응답을 받았습니다. 잠시 후 다시 시도해주세요.');
+                }
+                const result = JSON.parse(text);
 
                 // 성공
                 statusText.innerHTML = `✅ 번역 완료되었습니다!`;
