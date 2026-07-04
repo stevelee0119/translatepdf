@@ -76,6 +76,11 @@ def download_google_drive(url: str) -> Path:
     return target_path
 
 
+@api.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 @api.route("/translate", methods=["POST"])
 def translate_pdf():
     """
@@ -181,11 +186,6 @@ def download_file(task_id):
 
 
 app.register_blueprint(api)
-
-
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok"}), 200
 
 
 @app.route("/")
