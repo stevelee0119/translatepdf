@@ -435,7 +435,7 @@
                 } catch (parseError) {
                     console.error('서버 응답 JSON 파싱 실패:', {
                         error: parseError,
-                        rawResponseText: text,
+                        responsePreview: text.slice(0, 200),
                     });
                     throw new Error('서버 응답을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.');
                 }
@@ -444,7 +444,7 @@
                 statusText.innerHTML = `✅ 번역 완료되었습니다!`;
                 downloadContainer.style.display = 'block';
                 downloadContainer.innerHTML = `
-                    <a href="${API_BASE}/download/${result.task_id}" class="download-link" download>
+                    <a href="${API_BASE}/api/download/${result.task_id}" class="download-link" download>
                         📥 PDF 다운로드
                     </a>
                 `;
