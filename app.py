@@ -122,7 +122,8 @@ def build_interface() -> gr.Blocks:
     with gr.Blocks(css=".title {text-align: center; font-size: 40px; font-weight: 800; margin-bottom: 10px;} .subtitle {text-align: center; color: #555; margin-bottom: 30px;} .section {margin-top: 20px;}") as demo:
         gr.Markdown(
             "<div class='title'>PDF 한영 번역기</div>"
-            "<div class='subtitle'>by 법무교육단 — 영어 논문 PDF를 한국어 PDF로 빠르고 깔끔하게 변환합니다.</div>"
+            "<div class='subtitle' style='font-size:18px; font-weight:700; margin-bottom:4px;'>육군종합행정학교 AI 동아리</div>"
+            "<div class='subtitle'>영어 논문 PDF를 한국어 PDF로 빠르고 깔끔하게 변환합니다.</div>"
         )
 
         with gr.Row():
