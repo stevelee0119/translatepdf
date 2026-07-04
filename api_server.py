@@ -25,7 +25,7 @@ STATIC_DIR = SCRIPT_DIR / "docs"
 app = Flask(__name__, static_folder=str(STATIC_DIR), static_url_path="")
 CORS(app)
 
-api = Blueprint("api", __name__)
+api = Blueprint("api", __name__, url_prefix="/api")
 
 # Configuration
 UPLOAD_FOLDER = Path(tempfile.gettempdir()) / "translatepdf"
@@ -76,12 +76,7 @@ def download_google_drive(url: str) -> Path:
     return target_path
 
 
-@api.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok"}), 200
-
-
-@api.route("/api/translate", methods=["POST"])
+@api.route("/translate", methods=["POST"])
 def translate_pdf():
     """
     Translate PDF file
@@ -188,6 +183,11 @@ def download_file(task_id):
 app.register_blueprint(api)
 
 
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 @app.route("/")
 def index():
     return send_from_directory(STATIC_DIR, "index.html")
@@ -195,8 +195,6 @@ def index():
 
 @app.route("/<path:path>")
 def serve_static(path):
-    if path.startswith("api/") or path.startswith("download/"):
-        return jsonify({"error": "엔드포인트를 찾을 수 없습니다."}), 404
     file_path = STATIC_DIR / path
     if file_path.exists() and file_path.is_file():
         return send_from_directory(STATIC_DIR, path)
