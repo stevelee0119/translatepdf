@@ -16,8 +16,6 @@ from typing import Optional, Tuple
 from flask import Blueprint, Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import requests
-from pdf2zh.doclayout import OnnxModel
-from pdf2zh.high_level import translate
 
 
 # Get the directory where this script is located
@@ -132,11 +130,12 @@ def translate_pdf():
         output_dir = UPLOAD_FOLDER / task_id
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Load model
+        from pdf2zh.doclayout import OnnxModel
+        from pdf2zh.high_level import translate as pdf_translate
+
         model = OnnxModel.load_onnx()
 
-        # Translate
-        result_files = translate(
+        result_files = pdf_translate(
             [str(input_pdf)],
             output=str(output_dir),
             lang_in=lang_in,
