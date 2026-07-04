@@ -429,7 +429,12 @@
                 if (!text) {
                     throw new Error('서버로부터 빈 응답을 받았습니다. 잠시 후 다시 시도해주세요.');
                 }
-                const result = JSON.parse(text);
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (_) {
+                    throw new Error('서버 응답을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.');
+                }
 
                 // 성공
                 statusText.innerHTML = `✅ 번역 완료되었습니다!`;
