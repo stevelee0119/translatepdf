@@ -195,6 +195,8 @@ def index():
 
 @app.route("/<path:path>")
 def serve_static(path):
+    if path.startswith("api/") or path.startswith("download/"):
+        return jsonify({"error": "엔드포인트를 찾을 수 없습니다."}), 404
     file_path = STATIC_DIR / path
     if file_path.exists() and file_path.is_file():
         return send_from_directory(STATIC_DIR, path)
