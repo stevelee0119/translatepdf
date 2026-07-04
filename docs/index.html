@@ -348,6 +348,7 @@
         const API_BASE = window.location.origin.includes('github.io')
             ? 'https://translatepdf-api.herokuapp.com'
             : window.location.origin;
+        const LOG_PREVIEW_MAX_LENGTH = 200;
 
         const fileInput = document.getElementById('file-input');
         const gdriveUrl = document.getElementById('gdrive-url');
@@ -435,7 +436,7 @@
                 } catch (parseError) {
                     console.error('서버 응답 JSON 파싱 실패:', {
                         error: parseError,
-                        responsePreview: text.slice(0, 200),
+                        responsePreview: text.slice(0, LOG_PREVIEW_MAX_LENGTH),
                     });
                     throw new Error('서버 응답을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.');
                 }
@@ -467,7 +468,7 @@
         // 페이지 로드 시 API 연결 확인
         window.addEventListener('load', async () => {
             try {
-                const response = await fetch(`${API_BASE}/health`, {
+                const response = await fetch(`${API_BASE}/api/health`, {
                     method: 'GET',
                 });
                 if (response.ok) {

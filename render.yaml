@@ -3,7 +3,7 @@ services:
     name: translatepdf
     runtime: docker
     plan: free
-    healthCheckPath: /health
+    healthCheckPath: /api/health
     envVars:
       - key: PORT
         value: "10000"
