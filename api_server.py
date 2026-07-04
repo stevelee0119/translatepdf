@@ -4,9 +4,11 @@ Flask-based API server for PDF translation
 Supports both local deployment and cloud hosting (Render, Railway, etc.)
 """
 
+import logging
 import os
 import re
 import tempfile
+import traceback
 import uuid
 from pathlib import Path
 from typing import Optional, Tuple
@@ -24,6 +26,8 @@ STATIC_DIR = SCRIPT_DIR / "docs"
 
 app = Flask(__name__, static_folder=str(STATIC_DIR), static_url_path="")
 CORS(app)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
@@ -161,7 +165,7 @@ def translate_pdf():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
-        app.logger.error(f"Translation error: {e}")
+        logger.error(f"Translation error: {e}\n{traceback.format_exc()}")
         return jsonify({"error": f"번역 중 오류가 발생했습니다: {str(e)}"}), 500
 
 
