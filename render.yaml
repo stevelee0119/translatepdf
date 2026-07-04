@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: translatepdf
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: PYTHON_VERSION
+        value: "3.12"
