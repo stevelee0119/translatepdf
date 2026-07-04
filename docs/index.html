@@ -345,9 +345,12 @@
     </div>
 
     <script>
+        // 설정
         const API_BASE = window.location.origin.includes('github.io')
             ? 'https://translatepdf-api.herokuapp.com'
             : window.location.origin;
+        const API_PREFIX = '/api';
+        // JSON 파싱 실패 시 콘솔에 출력할 응답 프리뷰 최대 길이
         const LOG_PREVIEW_MAX_LENGTH = 200;
 
         const fileInput = document.getElementById('file-input');
@@ -412,7 +415,7 @@
                 formData.append('threads', threads.value);
 
                 // 진행률을 주기적으로 확인하기 위한 작업 ID 가져오기
-                const response = await fetch(`${API_BASE}/api/translate`, {
+                const response = await fetch(`${API_BASE}${API_PREFIX}/translate`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -445,7 +448,7 @@
                 statusText.innerHTML = `✅ 번역 완료되었습니다!`;
                 downloadContainer.style.display = 'block';
                 downloadContainer.innerHTML = `
-                    <a href="${API_BASE}/api/download/${result.task_id}" class="download-link" download>
+                    <a href="${API_BASE}${API_PREFIX}/download/${result.task_id}" class="download-link" download>
                         📥 PDF 다운로드
                     </a>
                 `;
@@ -468,7 +471,7 @@
         // 페이지 로드 시 API 연결 확인
         window.addEventListener('load', async () => {
             try {
-                const response = await fetch(`${API_BASE}/api/health`, {
+                const response = await fetch(`${API_BASE}${API_PREFIX}/health`, {
                     method: 'GET',
                 });
                 if (response.ok) {
