@@ -11,7 +11,7 @@ import uuid
 from pathlib import Path
 from typing import Optional, Tuple
 
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Blueprint, Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import requests
 from pdf2zh.doclayout import OnnxModel
@@ -23,7 +23,9 @@ SCRIPT_DIR = Path(__file__).parent.absolute()
 STATIC_DIR = SCRIPT_DIR / "docs"
 
 app = Flask(__name__, static_folder=str(STATIC_DIR), static_url_path="")
-CORS(app)  # Enable CORS for GitHub Pages
+CORS(app)
+
+api = Blueprint("api", __name__)
 
 # Configuration
 UPLOAD_FOLDER = Path(tempfile.gettempdir()) / "translatepdf"
@@ -74,29 +76,12 @@ def download_google_drive(url: str) -> Path:
     return target_path
 
 
-@app.route("/")
-def index():
-    """Serve index.html"""
-    return send_from_directory(STATIC_DIR, "index.html")
-
-
-@app.route("/<path:path>")
-def serve_static(path):
-    if path.startswith("api/") or path in ("health", "download"):
-        return jsonify({"error": "엔드포인트를 찾을 수 없습니다."}), 404
-    file_path = STATIC_DIR / path
-    if file_path.exists() and file_path.is_file():
-        return send_from_directory(STATIC_DIR, path)
-    return send_from_directory(STATIC_DIR, "index.html")
-
-
-@app.route("/health", methods=["GET"])
+@api.route("/health", methods=["GET"])
 def health():
-    """Health check endpoint"""
     return jsonify({"status": "ok"}), 200
 
 
-@app.route("/api/translate", methods=["POST"])
+@api.route("/api/translate", methods=["POST"])
 def translate_pdf():
     """
     Translate PDF file
@@ -180,7 +165,7 @@ def translate_pdf():
         return jsonify({"error": f"번역 중 오류가 발생했습니다: {str(e)}"}), 500
 
 
-@app.route("/download/<task_id>", methods=["GET"])
+@api.route("/download/<task_id>", methods=["GET"])
 def download_file(task_id):
     """Download translated PDF"""
     if task_id not in tasks:
@@ -198,6 +183,22 @@ def download_file(task_id):
         as_attachment=True,
         download_name=task["filename"],
     )
+
+
+app.register_blueprint(api)
+
+
+@app.route("/")
+def index():
+    return send_from_directory(STATIC_DIR, "index.html")
+
+
+@app.route("/<path:path>")
+def serve_static(path):
+    file_path = STATIC_DIR / path
+    if file_path.exists() and file_path.is_file():
+        return send_from_directory(STATIC_DIR, path)
+    return send_from_directory(STATIC_DIR, "index.html")
 
 
 @app.errorhandler(404)
