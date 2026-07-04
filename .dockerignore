@@ -1,0 +1,12 @@
+.git
+.github
+.devcontainer
+.venv
+__pycache__
+*.pyc
+outputs/
+translated_out/
+sample_en.pdf
+_config.yml
+README.md
+.gitignore
