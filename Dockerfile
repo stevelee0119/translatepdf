@@ -18,4 +18,4 @@ USER appuser
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "gunicorn api_server:app --bind 0.0.0.0:${PORT:-10000} --timeout 300 --workers 2"]
+CMD ["sh", "-c", "gunicorn api_server:app --bind 0.0.0.0:${PORT:-10000} --timeout 600 --workers 1"]

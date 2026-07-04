@@ -458,8 +458,9 @@
                 fileInput.value = '';
                 gdriveUrl.value = '';
             } catch (error) {
-                statusText.innerHTML = '❌ 번역 중 오류가 발생했습니다.';
-                showAlert(error.message || '번역 중 오류가 발생했습니다.');
+                const errorMsg = error.message || '번역 중 오류가 발생했습니다.';
+                statusText.innerHTML = `❌ ${errorMsg}`;
+                showAlert(errorMsg);
                 console.error('Error:', error);
             } finally {
                 translateBtn.disabled = false;
